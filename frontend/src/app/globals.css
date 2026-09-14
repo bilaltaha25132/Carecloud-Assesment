@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface: #ffffff;
+  --color-surface-muted: #f9f9fa;
+  --color-ink: #1c1c1c;
+  --color-ink-strong: #000000;
+  --color-ink-muted: rgba(0, 0, 0, 0.55);
+  --color-ink-subtle: rgba(0, 0, 0, 0.35);
+  --color-border-soft: rgba(0, 0, 0, 0.06);
+  --color-hairline: rgba(0, 0, 0, 0.1);
+  --color-hover: rgba(0, 0, 0, 0.03);
+  --color-active: rgba(0, 0, 0, 0.05);
+  --color-control: rgba(0, 0, 0, 0.04);
+  --color-brand: #4c98fd;
+  --color-card-lavender: #edeefc;
+  --color-card-blue: #e6f1fd;
+  --color-card-mint: #e3f7ee;
+  --color-card-rose: #fdeaea;
+  --color-card-amber: #fdf2e0;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+.dark {
+  --color-surface: #1c1c1c;
+  --color-surface-muted: #ffffff0a;
+  --color-ink: #f4f4f5;
+  --color-ink-strong: #ffffff;
+  --color-ink-muted: rgba(255, 255, 255, 0.55);
+  --color-ink-subtle: rgba(255, 255, 255, 0.35);
+  --color-border-soft: rgba(255, 255, 255, 0.08);
+  --color-hairline: rgba(255, 255, 255, 0.12);
+  --color-hover: rgba(255, 255, 255, 0.06);
+  --color-active: rgba(255, 255, 255, 0.09);
+  --color-control: rgba(255, 255, 255, 0.07);
+  --color-card-lavender: #26262e;
+  --color-card-blue: #1f2630;
+  --color-card-mint: #1c2a25;
+  --color-card-rose: #2e2224;
+  --color-card-amber: #2c2820;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-surface: #1c1c1c;
+    --color-surface-muted: #ffffff0a;
+    --color-ink: #f4f4f5;
+    --color-ink-strong: #ffffff;
+    --color-ink-muted: rgba(255, 255, 255, 0.55);
+    --color-ink-subtle: rgba(255, 255, 255, 0.35);
+    --color-border-soft: rgba(255, 255, 255, 0.08);
+    --color-hairline: rgba(255, 255, 255, 0.12);
+    --color-hover: rgba(255, 255, 255, 0.06);
+    --color-active: rgba(255, 255, 255, 0.09);
+    --color-control: rgba(255, 255, 255, 0.07);
+    --color-card-lavender: #26262e;
+    --color-card-blue: #1f2630;
+    --color-card-mint: #1c2a25;
+    --color-card-rose: #2e2224;
+    --color-card-amber: #2c2820;
+  }
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}

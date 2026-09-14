@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Sex {
+  MALE
+  FEMALE
+  OTHER
+  DECLINE_TO_ANSWER
+}
+
+enum CallStatus {
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CANCELLED
+}
+
+/// Format rules the DB itself enforces (phone digits, ZIP shape, state code,
+/// DOB not in the future) live as CHECK constraints in the initial migration.
+model Patient {
+  id                    String   @id @default(uuid()) @map("patient_id") @db.Uuid
+  firstName             String   @map("first_name") @db.VarChar(50)
+  lastName              String   @map("last_name") @db.VarChar(50)
+  dateOfBirth           DateTime @map("date_of_birth") @db.Date
+  sex                   Sex
+  phoneNumber           String   @map("phone_number") @db.Char(10)
+  email                 String?  @db.VarChar(254)
+  addressLine1          String   @map("address_line_1") @db.VarChar(200)
+  addressLine2          String?  @map("address_line_2") @db.VarChar(200)
+  city                  String   @db.VarChar(100)
+  state                 String   @db.Char(2)
+  zipCode               String   @map("zip_code") @db.VarChar(10)
+  insuranceProvider     String?  @map("insurance_provider") @db.VarChar(100)
+  insuranceMemberId     String?  @map("insurance_member_id") @db.VarChar(50)
+  preferredLanguage     String   @default("English") @map("preferred_language") @db.VarChar(50)
+  emergencyContactName  String?  @map("emergency_contact_name") @db.VarChar(100)
+  emergencyContactPhone String?  @map("emergency_contact_phone") @db.Char(10)
+  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt             DateTime? @map("deleted_at") @db.Timestamptz
+
+  calls        Call[]
+  appointments Appointment[]
+
+  @@index([phoneNumber])
+  @@index([lastName])
+  @@index([dateOfBirth])
+  @@index([deletedAt])
+  @@map("patients")
+}
+
+/// One row per phone call, keyed by Vapi's call id. Created on the first
+/// webhook we see for a call, enriched with the transcript at end-of-call.
+model Call {
+  id              String     @id @db.VarChar(64)
+  patientId       String?    @map("patient_id") @db.Uuid
+  callerNumber    String?    @map("caller_number") @db.VarChar(20)
+  status          CallStatus @default(IN_PROGRESS)
+  endedReason     String?    @map("ended_reason") @db.VarChar(100)
+  durationSeconds Int?       @map("duration_seconds")
+  transcript      String?
+  summary         String?
+  messages        Json?
+  startedAt       DateTime   @default(now()) @map("started_at") @db.Timestamptz
+  endedAt         DateTime?  @map("ended_at") @db.Timestamptz
+
+  patient Patient? @relation(fields: [patientId], references: [id], onDelete: SetNull)
+
+  @@index([patientId])
+  @@index([startedAt])
+  @@map("calls")
+}
+
+model Appointment {
+  id          String            @id @default(uuid()) @db.Uuid
+  patientId   String            @map("patient_id") @db.Uuid
+  scheduledAt DateTime          @map("scheduled_at") @db.Timestamptz
+  reason      String?           @db.VarChar(200)
+  status      AppointmentStatus @default(SCHEDULED)
+  createdAt   DateTime          @default(now()) @map("created_at") @db.Timestamptz
+
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([patientId])
+  @@index([scheduledAt])
+  @@map("appointments")
+}
