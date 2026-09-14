@@ -7,3 +7,6 @@ coverage/
 .env.*
 !.env.example
 .DS_Store
+
+# Local helper: the prompt exported for pasting into the Vapi dashboard
+carecloud-system-prompt.txt

@@ -94,3 +94,15 @@ model Appointment {
   @@index([scheduledAt])
   @@map("appointments")
 }
+
+/// Bookable clinic times managed by staff through the admin API. A slot is
+/// offered to callers when it is in the future and not yet taken by an
+/// appointment at the same time.
+model AppointmentSlot {
+  id        String   @id @default(uuid()) @db.Uuid
+  startsAt  DateTime @unique @map("starts_at") @db.Timestamptz
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([startsAt])
+  @@map("appointment_slots")
+}

@@ -51,6 +51,9 @@ initial migration:
 - `calls`: keyed by Vapi's call id, holds status, ended reason, duration,
   transcript, summary, raw messages, and an optional `patient_id`.
 - `appointments`: `patient_id`, `scheduled_at`, reason, status.
+- `appointment_slots`: bookable clinic times (`starts_at`, unique) opened by
+  staff through the admin API; a caller is offered a slot when it is future
+  and unbooked.
 
 ## Cross-cutting pieces
 

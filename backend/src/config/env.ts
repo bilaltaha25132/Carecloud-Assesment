@@ -8,6 +8,9 @@ const schema = z.object({
   OPENAI_API_KEY: z.string().min(1),
   VAPI_API_KEY: z.string().min(1),
   VAPI_WEBHOOK_SECRET: z.string().min(16),
+  // Guards the /admin routes. When blank the routes stay open for local dev,
+  // and the guard logs a warning once so it is never silently unprotected.
+  ADMIN_API_KEY: z.string().optional().default(''),
 });
 
 export type Env = z.infer<typeof schema>;

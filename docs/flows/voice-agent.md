@@ -18,13 +18,16 @@ and versioned like any other source.
 ## A call, step by step
 
 1. Vapi answers and speaks the first message ("...what's your first and last name?").
-2. The model collects required fields one question at a time, accepting
-   out-of-order answers and corrections. Obvious mistakes (a three-digit
-   phone, a birth date in the future) are re-asked immediately for that one
-   field, as the prompt instructs.
-3. As soon as the phone number is known the model calls
-   `check_existing_patient`. A match triggers the returning-caller offer
-   ("It looks like we already have a record for ... update instead?").
+2. It asks for the phone number next, right after the name, because that is
+   the unique key for duplicate detection. It calls `check_existing_patient`
+   immediately. A match triggers the returning-caller offer ("It looks like
+   we already have a record for ... update instead?"), so a returning caller
+   is recognized after two questions instead of the whole form. Phone and ZIP
+   validity is judged by the tools, never by the model counting digits.
+3. For a new caller it collects the remaining required fields one question at
+   a time, accepting out-of-order answers and corrections. Things it can
+   judge in conversation (a future birth date, a non-U.S. state) are re-asked
+   immediately for that one field.
 4. After the required fields, the model offers the optional ones in one
    sentence and collects only what the caller opts into.
 5. The model calls `validate_patient_details`. The server normalizes
@@ -60,7 +63,7 @@ voice path cannot write anything the API would reject.
 
 ## Latency choices
 
-- `gpt-4.1-mini` with `maxTokens: 200` and a prompt that demands one or two
+- `gpt-4.1` with `maxTokens: 200` and a prompt that demands one or two
   sentences per turn: fewer tokens before audio starts.
 - Deepgram `nova-3` with `language: multi` for transcription; ElevenLabs
   `eleven_flash_v2_5` for speech, the fastest multilingual voice model.
@@ -80,6 +83,8 @@ voice path cannot write anything the API would reject.
 | Caller spells with phonetics ("B as in boy") or dictates an email ("john dot smith at gmail dot com") | Prompt maps "as in" cues to the letter and "at"/"dot" to @ and . |
 | Caller mumbles or the line drops a word | Prompt: never guess a digit or letter; ask them to repeat just that part |
 | Caller makes small talk or asks a question mid-intake ("how are you?") | Prompt answers briefly, then steers back to the field it was collecting; never resets to a generic "how can I help you" |
+| Caller gives a phone number or ZIP | Model never counts digits itself; it passes what it heard to the tool, which validates with a regex, avoiding miscount loops |
+| Caller says "scratch that" or "no wait" after one answer | Redo only that field; a full restart happens only on a clear "start over" |
 | Caller gives several answers at once or out of order | Prompt: accept all, never re-ask known fields |
 | Caller wants to start over | Prompt: "No problem, let's start fresh", discard everything, restart |
 | Caller speaks Spanish | Transcriber is multilingual; prompt switches fully to Spanish and records `preferred_language: Spanish`; tool filler messages have Spanish variants |

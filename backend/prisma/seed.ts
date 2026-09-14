@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Prisma, PrismaClient } from '@prisma/client';
+import { CLINIC_SLOT_TIMES, clinicInstant, upcomingWeekdays } from '../src/modules/appointments/clinic-time';
 
 /** Two demo records with fixed ids so re-running the seed is a no-op. */
 const SEED_PATIENTS: Prisma.PatientCreateInput[] = [
@@ -46,6 +47,18 @@ async function main() {
     await prisma.patient.upsert({ where: { id: patient.id }, create: patient, update: {} });
   }
   console.log(`Seeded ${SEED_PATIENTS.length} patients`);
+
+  // Open the standard clinic times across the next week so callers have slots
+  // to book out of the box. Staff can add or remove these via the admin API.
+  let slots = 0;
+  for (const day of upcomingWeekdays(5)) {
+    for (const [hour, minute] of CLINIC_SLOT_TIMES) {
+      const startsAt = clinicInstant(day.getUTCFullYear(), day.getUTCMonth() + 1, day.getUTCDate(), hour, minute);
+      await prisma.appointmentSlot.upsert({ where: { startsAt }, create: { startsAt }, update: {} });
+      slots += 1;
+    }
+  }
+  console.log(`Seeded ${slots} appointment slots`);
   await prisma.$disconnect();
 }
 

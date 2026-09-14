@@ -22,8 +22,9 @@ by a shared secret.
 - REST API with a consistent `{ data, error }` envelope, server-side
   validation, partial updates, and soft delete.
 - Bonuses: duplicate detection by phone number with an offer to update,
-  mock appointment scheduling, Spanish switching, per-call transcript and
-  summary linked to the patient, a dashboard, and unit plus e2e tests.
+  appointment scheduling with an admin API to manage bookable slots, Spanish
+  switching, per-call transcript and summary linked to the patient, a
+  dashboard, and unit plus e2e tests.
 
 ## Architecture
 
@@ -49,7 +50,7 @@ commented header explaining each section.
 | Layer | Choice | Reason |
 |---|---|---|
 | Telephony and voice | Vapi | Free U.S. number that accepts calls from anyone, sub-second pipeline, bring-your-own OpenAI key. Twilio's trial only accepts calls from verified numbers ([ADR 0001](docs/decisions/0001-vapi-over-twilio.md)) |
-| LLM | OpenAI `gpt-4.1-mini` | Fast, reliable tool calling, good instruction following for a tightly scripted flow |
+| LLM | OpenAI `gpt-4.1` | Fast, reliable tool calling, good instruction following for a tightly scripted flow |
 | STT / TTS | Deepgram nova-3 multilingual, ElevenLabs Flash v2.5 | Lowest-latency options that still handle a switch to Spanish |
 | Backend | NestJS 11, TypeScript | Enforced controller / service / repository layering, DI, first-class validation |
 | Database | Postgres 16, Prisma 7 | Real enums and CHECK constraints for the schema criterion ([ADR 0002](docs/decisions/0002-postgres-prisma-and-shared-rules.md)) |
@@ -82,6 +83,7 @@ inside `backend/`.
 | `OPENAI_API_KEY` | Registered with Vapi as a bring-your-own-key credential |
 | `VAPI_API_KEY` | Vapi private key, used only by the sync script |
 | `VAPI_WEBHOOK_SECRET` | Random string Vapi echoes in `x-vapi-secret`; requests without it are rejected |
+| `ADMIN_API_KEY` | Optional. Guards `/admin/*` routes via the `x-admin-key` header; blank leaves them open for local dev |
 
 No key is hardcoded; the boot fails with a clear message if one is missing.
 

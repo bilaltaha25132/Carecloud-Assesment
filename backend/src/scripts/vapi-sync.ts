@@ -4,7 +4,7 @@ import { ASSISTANT_NAME, buildAssistant } from '../modules/voice/assistant/assis
 import { VapiClient } from '../modules/voice/vapi.client';
 
 const PHONE_NUMBER_NAME = 'CareCloud Intake Line';
-const LLM_MODEL = 'gpt-4.1-mini';
+const LLM_MODEL = 'gpt-4.1';
 const DESIRED_AREA_CODE = '815';
 
 /**
