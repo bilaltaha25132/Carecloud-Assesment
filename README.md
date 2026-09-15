@@ -5,11 +5,14 @@ patients through natural conversation, stores them in Postgres, and exposes
 them through a REST API and a dashboard.
 
 **Call it:** +1 (815) 415-9073
-**API base URL:** https://noninstinctively-exergonic-dora.ngrok-free.dev
+**API base URL:** https://carecloud-api.mbilaltaha.com
 (`GET /health`, `GET /patients`, see [docs/flows/patients-api.md](docs/flows/patients-api.md))
+**Staff console:** https://carecloud.mbilaltaha.com (sign in with `admin@carecloud.com` / `admin1234`)
 
-Reviewers need no credentials. The API is open; the Vapi webhook is protected
-by a shared secret.
+Reviewers need no credentials to call the number or query the API. The API is
+open; the Vapi webhook is protected by a shared secret. The system runs as a
+Docker Compose stack (API, Postgres, console) behind nginx with Let's Encrypt
+TLS; see [docs/deployment.md](docs/deployment.md).
 
 ## What it does
 
@@ -107,9 +110,9 @@ in the dashboard.
 
 ## Known limitations and trade-offs
 
-- The ngrok URL is random on the free tier and changes when the tunnel
-  restarts; `npm run vapi:sync` re-points the assistant in seconds. A
-  container deploy to Railway or Render would remove this step.
+- Hosting is a Docker Compose stack behind nginx on a small VPS for the review
+  window. If the API URL ever changes, `npm run vapi:sync` re-points the Vapi
+  assistant in seconds (then publish it in the Vapi dashboard).
 - Vapi's free credits cover the demo, not sustained traffic.
 - The appointment calendar is mock data: fixed weekday slots, no clinician
   or location.
