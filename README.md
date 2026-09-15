@@ -71,6 +71,17 @@ design and edge-case handling are in
 itself is `backend/src/modules/voice/assistant/intake.prompt.ts`, with a
 commented header explaining each section.
 
+## Repository layout
+
+- `backend/` — the NestJS API: the voice module (prompt, tool contracts,
+  webhook), the patients and appointments modules, the Prisma schema and
+  migrations, and the unit and e2e tests.
+- `frontend/` — the Next.js staff console.
+- `deploy/` — the Docker Compose stack, the nginx server blocks, and the env
+  template.
+- `docs/` — architecture, setup, conventions and deployment guides, one flow
+  per feature, and the ADRs behind the key decisions.
+
 ## Tech stack and why
 
 | Layer | Choice | Reason |
