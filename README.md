@@ -14,6 +14,18 @@ open; the Vapi webhook is protected by a shared secret. The system runs as a
 Docker Compose stack (API, Postgres, console) behind nginx with Let's Encrypt
 TLS; see [docs/deployment.md](docs/deployment.md).
 
+## Try it
+
+1. Call **+1 (815) 415-9073** and register a patient. The agent asks one thing
+   at a time, accepts out-of-order answers, reads everything back before
+   saving, and ends with a short goodbye.
+2. Confirm it persisted: `curl https://carecloud-api.mbilaltaha.com/patients`,
+   or open the console to see the patient, appointment, and call transcript.
+3. Worth trying on a call: correct a field or a spelling mid-sentence; book an
+   appointment when offered; say "Hablo español" to switch to Spanish; and call
+   a second time with the same number to be recognized as a returning patient
+   and offered an update.
+
 ## What it does
 
 - Answers the call, collects the required demographics one question at a
@@ -69,7 +81,7 @@ commented header explaining each section.
 | Backend | NestJS 11, TypeScript | Enforced controller / service / repository layering, DI, first-class validation |
 | Database | Postgres 16, Prisma 7 | Real enums and CHECK constraints for the schema criterion ([ADR 0002](docs/decisions/0002-postgres-prisma-and-shared-rules.md)) |
 | Dashboard | Next.js 16 App Router, Tailwind v4 | Server Components read the API directly; no client state |
-| Hosting | ngrok tunnel to a local process | Accepted by the brief; zero-cost and fastest to a live number |
+| Hosting | Docker Compose behind nginx with Let's Encrypt TLS on a VPS | Always-on, so the phone webhook never cold-starts; no laptop dependency. ngrok is the zero-setup option for local dev ([docs/deployment.md](docs/deployment.md)) |
 
 ## Run it locally
 
@@ -84,8 +96,12 @@ ngrok http 3000                        # put the https URL in PUBLIC_BASE_URL
 npm run vapi:sync                      # creates the assistant and phone number
 ```
 
-Tests: `npm test`, `npm run test:e2e`, `npm run lint`, `npm run typecheck`
+Tests (45: 32 unit on the validation rules, 13 e2e over the REST API and the
+webhook): `npm test`, `npm run test:e2e`, `npm run lint`, `npm run typecheck`
 inside `backend/`.
+
+To deploy the whole thing (API, Postgres, console) as a self-contained Docker
+stack behind nginx, see [docs/deployment.md](docs/deployment.md).
 
 ## Environment variables
 
