@@ -10,3 +10,6 @@ coverage/
 
 # Local helper: the prompt exported for pasting into the Vapi dashboard
 carecloud-system-prompt.txt
+
+# Personal learning notes, never committed
+_local-docs/
