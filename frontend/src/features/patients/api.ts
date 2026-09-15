@@ -108,6 +108,14 @@ export function listCalls(id: string): Promise<Call[]> {
   return request<Call[]>(`/patients/${encodeURIComponent(id)}/calls`);
 }
 
+export function listRecentCalls(): Promise<Call[]> {
+  return request<Call[]>('/calls');
+}
+
+export function getCall(id: string): Promise<Call> {
+  return request<Call>(`/calls/${encodeURIComponent(id)}`);
+}
+
 export function listAppointments(id: string): Promise<Appointment[]> {
   return request<Appointment[]>(`/patients/${encodeURIComponent(id)}/appointments`);
 }

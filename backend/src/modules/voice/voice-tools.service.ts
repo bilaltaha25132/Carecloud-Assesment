@@ -21,7 +21,10 @@ export interface ToolContext {
 type ToolArgs = Record<string, unknown>;
 type ToolHandler = (args: ToolArgs, ctx: ToolContext) => Promise<unknown>;
 
-const SLOTS_OFFERED = 12;
+// Hand the agent only the soonest few slots so it offers a short, natural
+// choice instead of reading a long list. The prompt offers two or three of
+// these at a time.
+const SLOTS_OFFERED = 5;
 const SAVE_FAILED = 'The record could not be saved because of a system problem on our side.';
 
 /**

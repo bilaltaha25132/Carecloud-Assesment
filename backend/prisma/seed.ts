@@ -48,11 +48,14 @@ async function main() {
   }
   console.log(`Seeded ${SEED_PATIENTS.length} patients`);
 
-  // Open the standard clinic times across the next week so callers have slots
-  // to book out of the box. Staff can add or remove these via the admin API.
+  // Open a handful of clinic times over the next few weekdays so callers have
+  // slots to book out of the box, without flooding the console. Staff add or
+  // remove more through the admin API.
+  const SEED_DAYS = 3;
+  const SEED_TIMES = CLINIC_SLOT_TIMES.slice(0, 3);
   let slots = 0;
-  for (const day of upcomingWeekdays(5)) {
-    for (const [hour, minute] of CLINIC_SLOT_TIMES) {
+  for (const day of upcomingWeekdays(SEED_DAYS)) {
+    for (const [hour, minute] of SEED_TIMES) {
       const startsAt = clinicInstant(day.getUTCFullYear(), day.getUTCMonth() + 1, day.getUTCDate(), hour, minute);
       await prisma.appointmentSlot.upsert({ where: { startsAt }, create: { startsAt }, update: {} });
       slots += 1;

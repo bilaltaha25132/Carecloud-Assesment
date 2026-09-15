@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { Inter } from 'next/font/google';
-import { Shell } from '../components/shell';
 import './globals.css';
 
 const inter = Inter({
@@ -18,9 +17,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
-      <body className="min-h-full">
-        <Shell>{children}</Shell>
-      </body>
+      <body className="min-h-full">{children}</body>
     </html>
   );
 }

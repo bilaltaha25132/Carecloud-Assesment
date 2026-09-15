@@ -5,6 +5,8 @@ import { formatDate, formatPhone } from './format';
 const HEAD_CLASS = 'px-3 py-2 text-left text-xs font-medium text-ink-muted';
 const CELL_CLASS = 'px-3 py-3 align-middle';
 const CARD_LABEL_CLASS = 'text-xs font-medium text-ink-muted';
+const VIEW_BUTTON_CLASS =
+  'inline-flex items-center rounded-lg border-[0.5px] border-hairline px-3 py-1.5 text-xs font-medium text-ink-muted transition-colors hover:bg-hover hover:text-ink';
 
 export function PatientTable({ patients }: { patients: Patient[] }) {
   return (
@@ -19,6 +21,9 @@ export function PatientTable({ patients }: { patients: Patient[] }) {
             <th className={HEAD_CLASS}>City / State</th>
             <th className={HEAD_CLASS}>Language</th>
             <th className={HEAD_CLASS}>Registered</th>
+            <th className={`${HEAD_CLASS} text-right`}>
+              <span className="sr-only">Actions</span>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -37,6 +42,11 @@ export function PatientTable({ patients }: { patients: Patient[] }) {
               </td>
               <td className={CELL_CLASS}>{patient.preferred_language}</td>
               <td className={`${CELL_CLASS} text-ink-muted`}>{formatDate(patient.created_at)}</td>
+              <td className={`${CELL_CLASS} text-right`}>
+                <Link className={VIEW_BUTTON_CLASS} href={`/patients/${patient.patient_id}`}>
+                  View details
+                </Link>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -75,6 +85,9 @@ export function PatientTable({ patients }: { patients: Patient[] }) {
                 <dd className="text-sm">{patient.preferred_language}</dd>
               </div>
             </dl>
+            <Link className={`${VIEW_BUTTON_CLASS} mt-4 w-full justify-center`} href={`/patients/${patient.patient_id}`}>
+              View details
+            </Link>
           </article>
         ))}
       </div>

@@ -1,8 +1,8 @@
-import type { Patient, PatientFilters } from '../../features/patients/api';
-import { ApiError, listPatients } from '../../features/patients/api';
-import { EmptyState } from '../../components/empty-state';
-import { FilterBar } from '../../features/patients/filter-bar';
-import { PatientTable } from '../../features/patients/patient-table';
+import type { Patient, PatientFilters } from '../../../features/patients/api';
+import { ApiError, listPatients } from '../../../features/patients/api';
+import { EmptyState } from '../../../components/empty-state';
+import { FilterBar } from '../../../features/patients/filter-bar';
+import { PatientTable } from '../../../features/patients/patient-table';
 
 function single(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;

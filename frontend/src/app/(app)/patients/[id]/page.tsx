@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import type { Appointment, Call, Patient } from '../../../features/patients/api';
-import { ApiError, NOT_FOUND, getPatient, listAppointments, listCalls } from '../../../features/patients/api';
-import { Badge } from '../../../components/badge';
-import { Block } from '../../../components/block';
-import { EmptyState } from '../../../components/empty-state';
-import { EM_DASH, formatDateTime, formatDuration, formatPhone } from '../../../features/patients/format';
-import { Transcript } from '../../../features/patients/transcript';
+import type { Appointment, Call, Patient } from '../../../../features/patients/api';
+import { ApiError, NOT_FOUND, getPatient, listAppointments, listCalls } from '../../../../features/patients/api';
+import { Badge } from '../../../../components/badge';
+import { Block } from '../../../../components/block';
+import { EmptyState } from '../../../../components/empty-state';
+import { EM_DASH, formatDateTime, formatPhone } from '../../../../features/patients/format';
+import { CallsPanel } from '../../../../features/patients/calls-panel';
 
 interface PatientRecord {
   patient: Patient | null;
@@ -114,31 +114,7 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
 
       <Block title="Calls">
         {calls.length > 0 ? (
-          <div className="flex flex-col gap-6">
-            {calls.map((call) => (
-              <article
-                className="border-b-[0.5px] border-hairline pb-6 last:border-b-0 last:pb-0"
-                key={call.call_id}
-              >
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="text-sm font-medium">{formatDateTime(call.started_at)}</span>
-                  <Badge label={call.status} />
-                  <span className="text-xs tabular-nums text-ink-muted">
-                    {formatDuration(call.duration_seconds)}
-                  </span>
-                  {call.ended_reason ? (
-                    <span className="text-xs text-ink-muted">{call.ended_reason}</span>
-                  ) : null}
-                </div>
-                {call.summary ? <p className="mt-3 text-sm">{call.summary}</p> : null}
-                {call.transcript ? (
-                  <div className="mt-4">
-                    <Transcript text={call.transcript} />
-                  </div>
-                ) : null}
-              </article>
-            ))}
-          </div>
+          <CallsPanel calls={calls} />
         ) : (
           <EmptyState title="No calls recorded for this patient." />
         )}

@@ -66,6 +66,20 @@ export class AppointmentsService {
     await this.patients.get(patientId);
     return (await this.appointments.findByPatient(patientId)).map(toAppointmentDto);
   }
+
+  /** Every appointment with its patient's name and phone, for the staff console. */
+  async listAll(): Promise<AdminAppointmentDto[]> {
+    return (await this.appointments.findAllWithPatient()).map((a) => ({
+      ...toAppointmentDto(a),
+      patient_name: `${a.patient.firstName} ${a.patient.lastName}`,
+      patient_phone: a.patient.phoneNumber,
+    }));
+  }
+}
+
+export interface AdminAppointmentDto extends AppointmentDto {
+  patient_name: string;
+  patient_phone: string;
 }
 
 export function toAppointmentDto(a: Appointment): AppointmentDto {

@@ -4,7 +4,7 @@ A phone number answered by an AI intake coordinator that registers new
 patients through natural conversation, stores them in Postgres, and exposes
 them through a REST API and a dashboard.
 
-**Call it:** +1 (815) 415-9015
+**Call it:** +1 (815) 415-9073
 **API base URL:** https://noninstinctively-exergonic-dora.ngrok-free.dev
 (`GET /health`, `GET /patients`, see [docs/flows/patients-api.md](docs/flows/patients-api.md))
 
@@ -23,8 +23,19 @@ by a shared secret.
   validation, partial updates, and soft delete.
 - Bonuses: duplicate detection by phone number with an offer to update,
   appointment scheduling with an admin API to manage bookable slots, Spanish
-  switching, per-call transcript and summary linked to the patient, a
-  dashboard, and unit plus e2e tests.
+  switching, per-call transcript and summary linked to the patient, a staff
+  admin console, and unit plus e2e tests.
+
+## Staff console
+
+A small Next.js console for staff, behind a demo login. Overview dashboard
+(patient, appointment, call and open-slot counts, plus recent calls and
+registrations), a patients list and detail view with call transcripts, and an
+appointments page that lists every booking and lets staff open or remove
+slots. Run it with `cd frontend && npm run dev`, open http://localhost:3001,
+and sign in with the credentials in `frontend/.env.local` (`APP_USERNAME` /
+`APP_PASSWORD`). The login is a single shared credential and a UX gate, not
+real authentication.
 
 ## Architecture
 
@@ -105,7 +116,8 @@ in the dashboard.
 - Phone numbers are not unique per patient (households share numbers), so
   duplicate detection offers the most recent record rather than enforcing
   uniqueness.
-- The dashboard is read-only and unauthenticated, as the brief allows.
+- The staff console login is a single shared credential and a UX gate, not
+  real authentication; the underlying API is open, as the brief allows.
 - No HIPAA controls; this is an assessment, not a clinical system.
 
 ## Next steps
