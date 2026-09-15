@@ -1,0 +1,57 @@
+# Self-contained CareCloud stack for a shared server. Everything lives on the
+# `carecloud` project network and named volume, and the app ports bind only to
+# localhost, so nginx is the only public entry point. Tear down with
+# `docker compose down -v` and nothing of this app remains.
+name: carecloud
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: carecloud-db
+    environment:
+      POSTGRES_USER: carecloud
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: carecloud
+    volumes:
+      - carecloud-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U carecloud']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: carecloud-api
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://carecloud:${POSTGRES_PASSWORD}@db:5432/carecloud
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - '127.0.0.1:4100:3000'
+    restart: unless-stopped
+
+  console:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: carecloud-console
+    environment:
+      API_BASE_URL: http://api:3000
+      ADMIN_API_KEY: ${ADMIN_API_KEY}
+      APP_USERNAME: ${APP_USERNAME}
+      APP_PASSWORD: ${APP_PASSWORD}
+      SESSION_SECRET: ${SESSION_SECRET}
+    depends_on:
+      - api
+    ports:
+      - '127.0.0.1:4101:3000'
+    restart: unless-stopped
+
+volumes:
+  carecloud-pgdata:
